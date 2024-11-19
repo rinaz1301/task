@@ -18,14 +18,6 @@ namespace Task.Connector
         public void StartUp(string connectionString)
         {
 			context = new ConnectorDbContext(connectionString);
-            //try
-            //{
-            //    var checkError = context.ChangeTracker;
-            //}
-            //catch(InvalidProviderException ex)
-            //{
-            //    Logger.Error($"{ex.Name}:{ex.Message}");
-            //}
         }
 
         public void CreateUser(UserToCreate user)
