@@ -41,11 +41,11 @@ public partial class ConnectorDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (provider.ToUpper().Contains("SQLSEVER"))
+        if (provider.ToUpper().Contains("SQLSERVER"))
         {
 			optionsBuilder.UseSqlServer(connectionString);
 		}
-        else if (provider.ToUpper().Contains("POSTGRESQL"))
+        else if (provider.ToUpper().Contains("POSTGRESSQL"))
         {
 			optionsBuilder.UseNpgsql(connectionString);
 		}

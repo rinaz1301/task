@@ -24,7 +24,7 @@ namespace Task.Connector
             }
             catch(InvalidProviderException ex)
             {
-                Logger.Error($"{ex.Name} {ex.Message}");
+                Logger.Error($"{ex.Name}:{ex.Message}");
             }
         }
 
