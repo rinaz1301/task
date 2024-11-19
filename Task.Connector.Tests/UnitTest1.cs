@@ -35,9 +35,8 @@ namespace Task.Connector.Tests
         public IConnector GetConnector(string provider)
         {
             IConnector connector = new ConnectorDb();
-            //connector.StartUp(connectorsCS[provider]);
+            connector.StartUp(connectorsCS[provider]);
             connector.Logger = new FileLogger($"{DateTime.Now.ToString("yyyy-MM-dd")}connector{provider}.Log", $"{DateTime.Now}connector{provider}");
-			connector.StartUp(connectorsCS[provider]);
 			return connector;
         }
 

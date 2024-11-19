@@ -18,14 +18,14 @@ namespace Task.Connector
         public void StartUp(string connectionString)
         {
 			context = new ConnectorDbContext(connectionString);
-            try
-            {
-                var checkError = context.ChangeTracker;
-            }
-            catch(InvalidProviderException ex)
-            {
-                Logger.Error($"{ex.Name}:{ex.Message}");
-            }
+            //try
+            //{
+            //    var checkError = context.ChangeTracker;
+            //}
+            //catch(InvalidProviderException ex)
+            //{
+            //    Logger.Error($"{ex.Name}:{ex.Message}");
+            //}
         }
 
         public void CreateUser(UserToCreate user)
@@ -33,11 +33,11 @@ namespace Task.Connector
             context.Users.Add(new User
             {
                 Login = user.Login,
-                FirstName = user.Properties.FirstOrDefault(x => x.Name.ToUpper() == "FIRSTNAME")?.Value ?? "",
-                LastName = user.Properties.FirstOrDefault(x => x.Name.ToUpper() == "LASTNAME")?.Value ?? "",
-                MiddleName = user.Properties.FirstOrDefault(x => x.Name.ToUpper() == "MIDDLENAME")?.Value ?? "",
-                TelephoneNumber = user.Properties.FirstOrDefault(x => x.Name.ToUpper() == "TELEPHONENUMBER")?.Value ?? "",
-                IsLead = user.Properties.FirstOrDefault(x => x.Name.ToUpper() == "ISLEAD")?.Value == "true",
+                FirstName = user.Properties.FirstOrDefault(x => x.Name == "firstName")?.Value ?? "",
+                LastName = user.Properties.FirstOrDefault(x => x.Name == "lastName")?.Value ?? "",
+                MiddleName = user.Properties.FirstOrDefault(x => x.Name == "middleName")?.Value ?? "",
+                TelephoneNumber = user.Properties.FirstOrDefault(x => x.Name == "telephoneNumber")?.Value ?? "",
+                IsLead = user.Properties.FirstOrDefault(x => x.Name == "isLead")?.Value == "true",
             });
 			context.Passwords.Add(new Passwords
 			{
@@ -54,11 +54,11 @@ namespace Task.Connector
         {
 			return context.Model.FindEntityType(typeof(User)).
                 GetProperties().
-                Where(p=> p.Name.ToUpper() != "LOGIN").
+                Where(p=> p.Name != "Login").
                 Select(p => p.Name).
                     Union(context.Model.FindEntityType(typeof(Passwords)).
                 GetProperties().
-                Where(p => p.Name.ToUpper() == "PASSWORD").
+                Where(p => p.Name == "Password").
                 Select(p => p.Name)).
                     Select(x => new Property
                     (
@@ -104,7 +104,7 @@ namespace Task.Connector
             (
                 x.Id.ToString(),
                 x.Name,
-                "Right"
+                "Request"
             )).ToList().Union(context.ItRoles.Select(x => new Permission
             (
                 x.Id.ToString(),
@@ -116,14 +116,14 @@ namespace Task.Connector
         public void AddUserPermissions(string userLogin, IEnumerable<string> rightIds)
         {
             context.UserRequestRights.AddRange(rightIds.
-                Where(x => x.ToUpper().Contains("REQUEST")).
+                Where(x => x.Contains("Request")).
                 Select(x => new UserRequestRight
                 {
                     UserId = userLogin,
                     RightId = Convert.ToInt32(x.Split(":")[1])
                 }));
             context.UserItroles.AddRange(rightIds.
-                Where(x => x.ToUpper().Contains("ROLE")).
+                Where(x => x.Contains("Role")).
                 Select(x => new UserItrole
                 {
                     UserId = userLogin,
@@ -137,14 +137,14 @@ namespace Task.Connector
         public void RemoveUserPermissions(string userLogin, IEnumerable<string> rightIds)
         {
 			context.UserRequestRights.RemoveRange(rightIds.
-				Where(x => x.ToUpper().Contains("REQUEST")).
+				Where(x => x.Contains("Request")).
 				Select(x => new UserRequestRight
 				{
 					UserId = userLogin,
 					RightId = Convert.ToInt32(x.Split(":")[1])
 				}));
 			context.UserItroles.RemoveRange(rightIds.
-				Where(x => x.ToUpper().Contains("ROLE")).
+				Where(x => x.Contains("Role")).
 				Select(x => new UserItrole
 				{
 					UserId = userLogin,
