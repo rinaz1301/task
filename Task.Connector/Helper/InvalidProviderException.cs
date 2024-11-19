@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Task.Connector.Helper
 {
-	internal class InvalidProviderException : Exception
+	internal class InvalidProviderException : ArgumentException
 	{
-		public InvalidProviderException(string message) : base(message) { }
+		public string Name { get => "InvalidProviderException"; }
+		public InvalidProviderException(string message) : base(message) {  }
 	}
 }

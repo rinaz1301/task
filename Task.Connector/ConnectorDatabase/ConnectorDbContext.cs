@@ -12,21 +12,24 @@ public partial class ConnectorDbContext : DbContext
 {
     private readonly string connectionString;
     private readonly string provider;
-    private readonly string schemaName = "TestTaskSchema";
+    private readonly string schemaName;
 
     public ConnectorDbContext(string connectorConnectionString)
     {
-        var connDict = connectorConnectionString.Split("';", StringSplitOptions.RemoveEmptyEntries).Select(x => x.Split("='")).ToDictionary(x => x[0], x => x[1]);
+        var connDict = connectorConnectionString.
+            Split("';", StringSplitOptions.RemoveEmptyEntries).
+            Select(x => x.Split("='")).
+            ToDictionary(key => key[0], value => value[1]);
         this.connectionString = connDict["ConnectionString"];
         this.provider = connDict["Provider"];
-        //this.schemaName = connDict["SchemaName"];
+        this.schemaName = connDict["SchemaName"];
 	}
 
     public virtual DbSet<ItRole> ItRoles { get; set; }
 
     public virtual DbSet<MigrationHistory> MigrationHistories { get; set; }
 
-    public virtual DbSet<Password> Passwords { get; set; }
+    public virtual DbSet<Passwords> Passwords { get; set; }
 
     public virtual DbSet<RequestRight> RequestRights { get; set; }
 
@@ -38,11 +41,11 @@ public partial class ConnectorDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (provider.ToUpper().Contains("SQLSERVER"))
+        if (provider.ToUpper().Contains("SQLSEVER"))
         {
 			optionsBuilder.UseSqlServer(connectionString);
 		}
-        else if (provider.ToUpper().Contains("POSTRESSQL"))
+        else if (provider.ToUpper().Contains("POSTGRESQL"))
         {
 			optionsBuilder.UseNpgsql(connectionString);
 		}
@@ -51,8 +54,6 @@ public partial class ConnectorDbContext : DbContext
             throw new InvalidProviderException("The unrecognizable provider.");
         }
     }
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ConnectorDb;User ID=KMPO\\RSagdeev;Trusted_Connection=True;MultipleActiveResultSets=true");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -79,12 +80,12 @@ public partial class ConnectorDbContext : DbContext
             entity.Property(e => e.ProductVersion).HasMaxLength(32);
         });
 
-        modelBuilder.Entity<Password>(entity =>
+        modelBuilder.Entity<Passwords>(entity =>
         {
             entity.ToTable("Passwords", schemaName);
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Password1)
+            entity.Property(e => e.Password)
                 .HasMaxLength(20)
                 .HasColumnName("password");
             entity.Property(e => e.UserId)
