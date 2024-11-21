@@ -18,6 +18,10 @@ namespace Task.Connector
         public void StartUp(string connectionString)
         {
 			context = new ConnectorDbContext(connectionString);
+            if (!context.Database.CanConnect())
+            {
+                Logger.Error("Can not connect to SqlServer");
+            }
         }
 
         public void CreateUser(UserToCreate user)

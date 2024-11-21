@@ -45,10 +45,6 @@ public partial class ConnectorDbContext : DbContext
         {
 			optionsBuilder.UseSqlServer(connectionString);
 		}
-        else if (provider.ToUpper().Contains("POSTGRESSQL"))
-        {
-			optionsBuilder.UseNpgsql(connectionString);
-		}
         else
         {
             throw new InvalidProviderException("The unrecognizable provider.");
